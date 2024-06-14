@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import study.likelionbeweekly.week7.jwt.JwtService;
 import study.likelionbeweekly.week7.member.dto.JoinMemberRequest;
 import study.likelionbeweekly.week7.member.dto.LoginMemberRequest;
 import study.likelionbeweekly.week7.member.dto.UpdateMemberRequest;
@@ -20,12 +21,18 @@ import study.likelionbeweekly.week7.member.dto.UpdateMemberRequest;
 @RequestMapping("/members")
 public class MemberController {
 
+    private final JwtService jwtService;
     private final MemberService memberService;
 
     @GetMapping
     public ResponseEntity<String> login(@RequestBody LoginMemberRequest request) {
         memberService.loginMember(request);
-        return ResponseEntity.ok().body("ok");
+
+        String email = request.email();
+        String jwt = jwtService.create(email);
+        return ResponseEntity.ok()
+                .header("Authorization", jwt)
+                .body("ok");
     }
 
     @PostMapping
