@@ -1,17 +1,23 @@
 package study.likelionbeweekly.week7.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.likelionbeweekly.week7.member.Member;
 import study.likelionbeweekly.week7.member.MemberRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -49,9 +55,34 @@ public class JwtService {
 
     @Transactional(readOnly = true)
     public Member parse(String token) {
-        String email = getEmail(token);
-        return memberRepository.findByEmail(email)
-                .orElseThrow(EntityNotFoundException::new);
+        validTokenPrefix(token);
+
+        try {
+            String email = getEmail(token);
+            return memberRepository.findByEmail(email)
+                    .orElseThrow(EntityNotFoundException::new);
+        } catch (ExpiredJwtException e) {
+            log.error("토큰 만료", e);
+            throw new IllegalArgumentException("토큰 만료", e);
+        } catch (UnsupportedJwtException e) {
+            log.error("미지원 토큰", e);
+            throw new IllegalArgumentException("미지원 토큰", e);
+        } catch (MalformedJwtException e) {
+            log.error("토큰 형식 오류", e);
+            throw new IllegalArgumentException("토큰 형식 오류", e);
+        } catch (SignatureException e) {
+            log.error("유효하지 않은 토큰 서명", e);
+            throw new IllegalArgumentException("유효하지 않은 토큰 서명", e);
+        } catch (IllegalArgumentException e) {
+            log.error("토큰이 null 이거나 빈 문자열", e);
+            throw new IllegalArgumentException("토큰이 null 이거나 빈 문자열", e);
+        }
+    }
+
+    private void validTokenPrefix(String token) {
+        if (!token.startsWith(TOKEN_PREFIX)) {
+            throw new IllegalArgumentException("유효 토큰 아님");
+        }
     }
 
     private String getEmail(String token) {
