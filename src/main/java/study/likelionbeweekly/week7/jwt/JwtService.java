@@ -75,9 +75,6 @@ public class JwtService {
         } catch (SignatureException e) {
             log.error("유효하지 않은 토큰 서명", e);
             throw new IllegalArgumentException("유효하지 않은 토큰 서명", e);
-        } catch (IllegalArgumentException e) {
-            log.error("토큰이 null 이거나 빈 문자열", e);
-            throw new IllegalArgumentException("토큰이 null 이거나 빈 문자열", e);
         }
     }
 
