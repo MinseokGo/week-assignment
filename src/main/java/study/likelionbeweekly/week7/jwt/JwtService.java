@@ -30,6 +30,7 @@ public class JwtService {
     private static final Long SECONDS = 60L;
     private static final Long MINUTES = 60L;
     private static final Long HOURS = 24L;
+    private static final int TOKEN_BEGIN_INDEX = 7;
 
     private final JwtProperties jwtProperties;
     private final MemberRepository memberRepository;
@@ -49,7 +50,8 @@ public class JwtService {
                                         .getBytes(StandardCharsets.UTF_8),
                                 SIG.HS256.key()
                                         .build()
-                                        .getAlgorithm()))
+                                        .getAlgorithm())
+                )
                 .compact();
     }
 
@@ -86,10 +88,15 @@ public class JwtService {
     }
 
     private String getEmail(String token) {
+        token = token.substring(TOKEN_BEGIN_INDEX);
         return Jwts.parser()
                 .verifyWith(
-                        SIG.HS256.key()
-                                .build()
+                        new SecretKeySpec(
+                                jwtProperties.getSecretKey()
+                                        .getBytes(StandardCharsets.UTF_8),
+                                SIG.HS256.key()
+                                        .build()
+                                        .getAlgorithm())
                 )
                 .build()
                 .parseSignedClaims(token)
