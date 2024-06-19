@@ -85,7 +85,7 @@ public class JwtService {
     }
 
     private String getEmail(String token) {
-        token = token.substring(TOKEN_BEGIN_INDEX);
+        String subToken = token.substring(TOKEN_BEGIN_INDEX);
         return Jwts.parser()
                 .verifyWith(
                         new SecretKeySpec(
@@ -96,7 +96,7 @@ public class JwtService {
                                         .getAlgorithm())
                 )
                 .build()
-                .parseSignedClaims(token)
+                .parseSignedClaims(subToken)
                 .getPayload()
                 .get("email", String.class);
     }
