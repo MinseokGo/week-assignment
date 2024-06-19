@@ -2,6 +2,8 @@ package study.likelionbeweekly.week7.member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,4 +28,7 @@ public class Member extends BaseEntity {
 
     @Column(length = 1024, nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

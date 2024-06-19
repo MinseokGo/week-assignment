@@ -1,4 +1,4 @@
-package study.likelionbeweekly.week7.jwt;
+package study.likelionbeweekly.week7.security.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package study.likelionbeweekly.week7.jwt;
+package study.likelionbeweekly.week7.security.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -6,16 +6,13 @@ import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.persistence.EntityNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import study.likelionbeweekly.week7.member.Member;
-import study.likelionbeweekly.week7.member.MemberRepository;
 
 @Slf4j
 @Service
@@ -33,15 +30,14 @@ public class JwtService {
     private static final int TOKEN_BEGIN_INDEX = 7;
 
     private final JwtProperties jwtProperties;
-    private final MemberRepository memberRepository;
 
-    public String create(String email) {
+    public String create(Member member) {
         return TOKEN_PREFIX + Jwts.builder()
                 .subject(LIKE_LION_AUTH_SUBJECT)
                 .issuer(TOKEN_PROVIDER)
                 .audience()
-                .and().id(email)
-                .claim("email", email)
+                .and().id(member.getEmail())
+                .claim("email", member.getEmail())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + MILLISECONDS * SECONDS * MINUTES * HOURS))
                 .signWith(
@@ -55,14 +51,11 @@ public class JwtService {
                 .compact();
     }
 
-    @Transactional(readOnly = true)
-    public Member parse(String token) {
+    public String parse(String token) {
         validTokenPrefix(token);
 
         try {
-            String email = getEmail(token);
-            return memberRepository.findByEmail(email)
-                    .orElseThrow(EntityNotFoundException::new);
+            return getEmail(token);
         } catch (ExpiredJwtException e) {
             log.error("토큰 만료", e);
             throw new IllegalArgumentException("토큰 만료", e);
