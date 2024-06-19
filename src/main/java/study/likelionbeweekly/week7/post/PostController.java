@@ -52,7 +52,8 @@ public class PostController {
                                          @RequestBody UpdatePostRequest request,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        postService.updatePost(id, userDetails.member(), request);
+        Member member = userDetails.member();
+        postService.updatePost(id, member, request);
         return ResponseEntity.ok().body("ok");
     }
 
@@ -60,7 +61,8 @@ public class PostController {
     public ResponseEntity<String> delete(@PathVariable(name = "id") Long id,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        postService.deletePost(id, userDetails.member());
+        Member member = userDetails.member();
+        postService.deletePost(id, member);
         return ResponseEntity.ok().body("ok");
     }
 }
