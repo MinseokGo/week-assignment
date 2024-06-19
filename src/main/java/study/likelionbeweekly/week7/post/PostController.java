@@ -3,6 +3,7 @@ package study.likelionbeweekly.week7.post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import study.likelionbeweekly.week7.member.Member;
 import study.likelionbeweekly.week7.post.dto.CreatePostRequest;
 import study.likelionbeweekly.week7.post.dto.FindAllPostsResponse;
 import study.likelionbeweekly.week7.post.dto.FindPostResponse;
 import study.likelionbeweekly.week7.post.dto.UpdatePostRequest;
+import study.likelionbeweekly.week7.security.jwt.CustomUserDetails;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,8 +33,11 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody CreatePostRequest request) {
-        postService.createPost(request);
+    public ResponseEntity<String> create(@RequestBody CreatePostRequest request,
+                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        Member member = userDetails.member();
+        postService.createPost(request, member);
         return ResponseEntity.status(HttpStatus.CREATED).body("created");
     }
 
@@ -43,15 +49,18 @@ public class PostController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable(name = "id") Long id,
-                                         @RequestBody UpdatePostRequest request) {
+                                         @RequestBody UpdatePostRequest request,
+                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        postService.updatePost(id, request);
+        postService.updatePost(id, userDetails.member(), request);
         return ResponseEntity.ok().body("ok");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable(name = "id") Long id) {
-        postService.deletePost(id);
+    public ResponseEntity<String> delete(@PathVariable(name = "id") Long id,
+                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        postService.deletePost(id, userDetails.member());
         return ResponseEntity.ok().body("ok");
     }
 }

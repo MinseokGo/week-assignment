@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import study.likelionbeweekly.week7.member.Member;
-import study.likelionbeweekly.week7.member.MemberRepository;
 import study.likelionbeweekly.week7.post.dto.CreatePostRequest;
 import study.likelionbeweekly.week7.post.dto.FindAllPostsResponse;
 import study.likelionbeweekly.week7.post.dto.FindPostResponse;
@@ -19,17 +18,13 @@ import study.likelionbeweekly.week7.post.dto.UpdatePostRequest;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
-    public void createPost(CreatePostRequest request) {
-        Member member = memberRepository.findById(request.memberId())
-                .orElseThrow(EntityNotFoundException::new);
-
+    public void createPost(CreatePostRequest request, Member other) {
         String createTitle = request.title();
         String createContent = request.content();
 
-        Post post = new Post(createTitle, createContent, member);
+        Post post = new Post(createTitle, createContent, other);
         postRepository.save(post);
     }
 
@@ -45,9 +40,10 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Long id, UpdatePostRequest request) {
+    public void updatePost(Long id, Member other, UpdatePostRequest request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+        validatePostAuthor(other, post);
 
         String updateTitle = request.title();
         String updateContent = request.content();
@@ -62,9 +58,18 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long id) {
+    public void deletePost(Long id, Member other) {
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+        validatePostAuthor(other, post);
+
         post.setDeleted(true);
+    }
+
+    private void validatePostAuthor(Member other, Post post) {
+        Member member = post.getMember();
+        if (!member.equals(other)) {
+            throw new IllegalArgumentException("mismatched member");
+        }
     }
 }
