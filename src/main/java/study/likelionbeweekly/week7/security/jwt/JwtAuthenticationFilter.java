@@ -28,12 +28,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER_KEY);
 
-        String email = jwtService.parse(authorizationHeader);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        if (authorizationHeader != null){
+            String email = jwtService.parse(authorizationHeader);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null,
-                userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(token);
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null,
+                    userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(token);
+        }
 
         filterChain.doFilter(request, response);
     }

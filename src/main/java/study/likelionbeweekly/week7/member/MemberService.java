@@ -41,7 +41,7 @@ public class MemberService {
         Optional<Member> optionalMember = memberRepository.findByEmail(joinEmail);
         checkDuplicateEmail(optionalMember);
 
-        Member member = new Member(joinName, joinEmail, joinPassword, Role.ADMIN);
+        Member member = new Member(joinName, joinEmail, joinPassword, Role.USER);
         memberRepository.save(member);
     }
 

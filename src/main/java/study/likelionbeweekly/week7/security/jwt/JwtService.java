@@ -12,7 +12,6 @@ import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import study.likelionbeweekly.week7.member.Member;
 
 @Slf4j
 @Service
@@ -31,13 +30,13 @@ public class JwtService {
 
     private final JwtProperties jwtProperties;
 
-    public String create(Member member) {
+    public String create(String email) {
         return TOKEN_PREFIX + Jwts.builder()
                 .subject(LIKE_LION_AUTH_SUBJECT)
                 .issuer(TOKEN_PROVIDER)
                 .audience()
-                .and().id(member.getEmail())
-                .claim("email", member.getEmail())
+                .and().id(email)
+                .claim("email", email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + MILLISECONDS * SECONDS * MINUTES * HOURS))
                 .signWith(
