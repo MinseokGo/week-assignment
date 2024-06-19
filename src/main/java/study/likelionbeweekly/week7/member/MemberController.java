@@ -3,6 +3,7 @@ package study.likelionbeweekly.week7.member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import study.likelionbeweekly.week7.member.dto.JoinMemberRequest;
 import study.likelionbeweekly.week7.member.dto.LoginMemberRequest;
 import study.likelionbeweekly.week7.member.dto.UpdateMemberRequest;
+import study.likelionbeweekly.week7.security.jwt.CustomUserDetails;
 import study.likelionbeweekly.week7.security.jwt.JwtService;
 
 @RestController
@@ -41,9 +43,11 @@ public class MemberController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable(name = "id") Long id,
-                                         @RequestBody UpdateMemberRequest request) {
+                                         @RequestBody UpdateMemberRequest request,
+                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        memberService.updateMember(id, request);
+        Member member = userDetails.member();
+        memberService.updateMember(id, member, request);
         return ResponseEntity.ok().body("ok");
     }
 

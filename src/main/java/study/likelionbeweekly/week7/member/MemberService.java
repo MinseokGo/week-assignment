@@ -1,6 +1,7 @@
 package study.likelionbeweekly.week7.member;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,9 +47,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(Long id, UpdateMemberRequest request) {
+    public void updateMember(Long id, Member other, UpdateMemberRequest request) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+        validSameMember(member, other);
 
         String updateName = request.name();
         String updateEmail = request.email();
@@ -60,6 +62,12 @@ public class MemberService {
         member.setName(updateName);
         member.setEmail(updateEmail);
         member.setPassword(updatePassword);
+    }
+
+    private void validSameMember(Member member, Member other) {
+        if (!Objects.equals(member, other)) {
+            throw new IllegalArgumentException("수정 권한 없음");
+        }
     }
 
     private void checkDuplicateEmail(Optional<Member> optionalMember) {

@@ -2,6 +2,7 @@ package study.likelionbeweekly.week7.comment;
 
 import jakarta.persistence.EntityExistsException;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,9 +62,14 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id, Member member) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(EntityExistsException::new);
+
+        if (!Objects.equals(member, comment.getMember())){
+            throw new IllegalArgumentException("mismatched member");
+        }
+
         comment.setDeleted(true);
     }
 }
