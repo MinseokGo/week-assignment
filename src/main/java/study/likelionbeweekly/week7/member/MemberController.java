@@ -28,8 +28,9 @@ public class MemberController {
 
     @GetMapping
     public ResponseEntity<String> login(@RequestBody LoginMemberRequest request) {
-        memberService.loginMember(request);
-        String jwt = jwtService.create(request.email());
+        Member member = memberService.loginMember(request);
+        String email = member.getEmail();
+        String jwt = jwtService.create(email);
         return ResponseEntity.ok()
                 .header("Authorization", jwt)
                 .body("ok");
