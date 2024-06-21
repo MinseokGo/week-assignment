@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.likelionbeweekly.week7.member.dto.JoinMemberRequest;
@@ -15,6 +16,7 @@ import study.likelionbeweekly.week7.member.dto.UpdateMemberRequest;
 @Transactional(readOnly = true)
 public class MemberService {
 
+    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
 
     public Member loginMember(LoginMemberRequest request) {
@@ -44,7 +46,8 @@ public class MemberService {
         Optional<Member> optionalMember = memberRepository.findByEmail(joinEmail);
         checkDuplicateEmail(optionalMember);
 
-        Member member = new Member(joinName, joinEmail, joinPassword, Role.USER);
+        String encodedPassword = passwordEncoder.encode(joinPassword);
+        Member member = new Member(joinName, joinEmail, encodedPassword, Role.USER);
         memberRepository.save(member);
     }
 
@@ -61,9 +64,10 @@ public class MemberService {
         Optional<Member> optionalMember = memberRepository.findByEmail(updateEmail);
         checkDuplicateEmail(optionalMember);
 
+        String encodedPassword = passwordEncoder.encode(updatePassword);
         member.setName(updateName);
         member.setEmail(updateEmail);
-        member.setPassword(updatePassword);
+        member.setPassword(encodedPassword);
     }
 
     private void checkDuplicateEmail(Optional<Member> optionalMember) {

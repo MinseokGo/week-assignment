@@ -6,12 +6,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import study.likelionbeweekly.week7.member.Member;
+import study.likelionbeweekly.week7.member.Role;
 
 public record CustomUserDetails(Member member) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(member.getRole().name()));
+        Role role = member.getRole();
+        return Collections.singleton(
+                new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

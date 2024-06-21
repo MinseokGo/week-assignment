@@ -46,15 +46,23 @@ public class PostService {
         validatePostAuthor(other, post);
 
         String updateTitle = request.title();
-        String updateContent = request.content();
+        updatePostTile(updateTitle, post);
 
+        String updateContent = request.content();
+        updatePostContent(updateContent, post);
+        postRepository.save(post);
+    }
+
+    private void updatePostTile(String updateTitle, Post post) {
         if (StringUtils.hasText(updateTitle)) {
             post.setTitle(updateTitle);
         }
+    }
+
+    private void updatePostContent(String updateContent, Post post) {
         if (StringUtils.hasText(updateContent)) {
             post.setContent(updateContent);
         }
-        postRepository.save(post);
     }
 
     @Transactional
