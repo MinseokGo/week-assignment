@@ -24,15 +24,15 @@ public class CommentService {
     public FindAllCommentsResponse findAllComments(FindAllCommentsRequest request) {
         Long postId = request.postId();
         List<Comment> comments = commentRepository.findByPostId(postId);
-        return FindAllCommentsResponse.of(comments);
+        return FindAllCommentsResponse.of(postId, comments);
     }
 
     @Transactional
-    public void createComment(Member other, CreateCommentRequest request) {
+    public void createComment(Member member, CreateCommentRequest request) {
         Post post = getPost(request);
 
         String content = request.content();
-        Comment comment = new Comment(content, other, post);
+        Comment comment = new Comment(content, member, post);
         commentRepository.save(comment);
     }
 
@@ -53,10 +53,10 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long id, Member member) {
+    public void deleteComment(Long id, Member other) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(EntityExistsException::new);
-        validateCommentAuthor(member, comment);
+        validateCommentAuthor(other, comment);
 
         comment.setDeleted(true);
     }

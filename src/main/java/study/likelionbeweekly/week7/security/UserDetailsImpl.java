@@ -1,4 +1,4 @@
-package study.likelionbeweekly.week7.security.jwt;
+package study.likelionbeweekly.week7.security;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import study.likelionbeweekly.week7.member.Member;
 import study.likelionbeweekly.week7.member.Role;
 
-public record CustomUserDetails(Member member) implements UserDetails {
+public record UserDetailsImpl(Member member) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

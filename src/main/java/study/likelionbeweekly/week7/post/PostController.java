@@ -17,7 +17,7 @@ import study.likelionbeweekly.week7.post.dto.CreatePostRequest;
 import study.likelionbeweekly.week7.post.dto.FindAllPostsResponse;
 import study.likelionbeweekly.week7.post.dto.FindPostResponse;
 import study.likelionbeweekly.week7.post.dto.UpdatePostRequest;
-import study.likelionbeweekly.week7.security.jwt.CustomUserDetails;
+import study.likelionbeweekly.week7.security.UserDetailsImpl;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody CreatePostRequest request,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         postService.createPost(request, member);
@@ -50,7 +50,7 @@ public class PostController {
     @PatchMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable(name = "id") Long id,
                                          @RequestBody UpdatePostRequest request,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         postService.updatePost(id, member, request);
@@ -59,7 +59,7 @@ public class PostController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable(name = "id") Long id,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         postService.deletePost(id, member);

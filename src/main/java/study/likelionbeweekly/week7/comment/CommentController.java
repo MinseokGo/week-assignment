@@ -17,7 +17,7 @@ import study.likelionbeweekly.week7.comment.dto.FindAllCommentsRequest;
 import study.likelionbeweekly.week7.comment.dto.FindAllCommentsResponse;
 import study.likelionbeweekly.week7.comment.dto.UpdateCommentRequest;
 import study.likelionbeweekly.week7.member.Member;
-import study.likelionbeweekly.week7.security.jwt.CustomUserDetails;
+import study.likelionbeweekly.week7.security.UserDetailsImpl;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody CreateCommentRequest request,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         commentService.createComment(member, request);
@@ -44,7 +44,7 @@ public class CommentController {
     @PatchMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable(name = "id") Long id,
                                          @RequestBody UpdateCommentRequest request,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         commentService.updateComment(id, member, request);
@@ -53,7 +53,7 @@ public class CommentController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable(name = "id") Long id,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         commentService.deleteComment(id, member);

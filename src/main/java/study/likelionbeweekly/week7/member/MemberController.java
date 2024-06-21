@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import study.likelionbeweekly.week7.member.dto.JoinMemberRequest;
 import study.likelionbeweekly.week7.member.dto.LoginMemberRequest;
 import study.likelionbeweekly.week7.member.dto.UpdateMemberRequest;
-import study.likelionbeweekly.week7.security.jwt.CustomUserDetails;
+import study.likelionbeweekly.week7.security.UserDetailsImpl;
 import study.likelionbeweekly.week7.security.jwt.JwtService;
 
 @RestController
@@ -45,7 +45,7 @@ public class MemberController {
     @PatchMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable(name = "id") Long id,
                                          @RequestBody UpdateMemberRequest request,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         memberService.updateMember(id, member, request);
@@ -54,7 +54,7 @@ public class MemberController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable(name = "id") Long id,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Member member = userDetails.member();
         memberService.deleteMember(id, member);
