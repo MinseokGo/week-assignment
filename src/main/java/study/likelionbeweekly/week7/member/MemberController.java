@@ -1,5 +1,7 @@
 package study.likelionbeweekly.week7.member;
 
+import static study.likelionbeweekly.week7.utils.Constants.AUTHORIZATION_HEADER_KEY;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +28,12 @@ public class MemberController {
 
     @GetMapping
     public ResponseEntity<String> login(@RequestBody LoginMemberRequest request) {
-        memberService.loginMember(request);
+        Member member = memberService.loginMember(request);
 
-        String email = request.email();
+        String email = member.getEmail();
         String jwt = jwtService.create(email);
         return ResponseEntity.ok()
-                .header("Authorization", jwt)
+                .header(AUTHORIZATION_HEADER_KEY, jwt)
                 .body("ok");
     }
 

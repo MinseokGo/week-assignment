@@ -1,5 +1,7 @@
 package study.likelionbeweekly.week7.jwt;
 
+import static study.likelionbeweekly.week7.utils.Constants.AUTHORIZATION_HEADER_KEY;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +19,7 @@ public class JwtController {
 
     @GetMapping("/parse")
     public ResponseEntity<String> parse(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION_HEADER_KEY);
         Member member = jwtService.parse(token);
         log.info("member={}", member);
         return ResponseEntity.ok().body("ok");

@@ -1,6 +1,6 @@
 package study.likelionbeweekly.week7.comment;
 
-import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,19 +42,19 @@ public class CommentService {
     private Member getMember(CreateCommentRequest request) {
         Long memberId = request.memberId();
         return memberRepository.findById(memberId)
-                .orElseThrow(EntityExistsException::new);
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     private Post getPost(CreateCommentRequest request) {
         Long postId = request.postId();
         return postRepository.findById(postId)
-                .orElseThrow(EntityExistsException::new);
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Transactional
     public void updateComment(Long id, UpdateCommentRequest request) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(EntityExistsException::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         String updateContent = request.content();
         comment.setContent(updateContent);
@@ -63,7 +63,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(EntityExistsException::new);
+                .orElseThrow(EntityNotFoundException::new);
         comment.setDeleted(true);
     }
 }

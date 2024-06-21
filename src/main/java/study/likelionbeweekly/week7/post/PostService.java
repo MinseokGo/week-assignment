@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import study.likelionbeweekly.week7.member.Member;
 import study.likelionbeweekly.week7.member.MemberRepository;
 import study.likelionbeweekly.week7.post.dto.CreatePostRequest;
@@ -50,14 +49,10 @@ public class PostService {
                 .orElseThrow(EntityNotFoundException::new);
 
         String updateTitle = request.title();
-        String updateContent = request.content();
+        post.setTitle(updateTitle);
 
-        if (StringUtils.hasText(updateTitle)) {
-            post.setTitle(updateTitle);
-        }
-        if (StringUtils.hasText(updateContent)) {
-            post.setContent(updateContent);
-        }
+        String updateContent = request.content();
+        post.setContent(updateContent);
         postRepository.save(post);
     }
 
