@@ -19,7 +19,7 @@ public class Member extends BaseEntity {
     @Column(length = 16, nullable = false)
     private String name;
 
-    @Column(length = 64, nullable = false)
+    @Column(length = 64, nullable = false, unique = true)
     private String email;
 
     @Column(length = 1024, nullable = false)
