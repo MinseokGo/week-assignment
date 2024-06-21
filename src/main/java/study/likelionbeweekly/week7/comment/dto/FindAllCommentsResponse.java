@@ -5,9 +5,9 @@ import study.likelionbeweekly.week7.comment.Comment;
 
 public record FindAllCommentsResponse(Long postId, List<FoundComment> comments) {
 
-    public static FindAllCommentsResponse of(List<Comment> comments) {
+    public static FindAllCommentsResponse of(Long postId, List<Comment> comments) {
         return new FindAllCommentsResponse(
-                comments.get(0).getPost().getId(),
+                postId,
                 comments.stream()
                         .map(comment ->
                                 new FoundComment(

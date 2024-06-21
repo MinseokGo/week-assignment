@@ -1,6 +1,7 @@
 package study.likelionbeweekly.week7.member;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,18 +17,21 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void loginMember(LoginMemberRequest request) {
+    public Member loginMember(LoginMemberRequest request) {
         String loginEmail = request.email();
         String loginPassword = request.password();
 
         Member member = memberRepository.findByEmail(loginEmail)
                 .orElseThrow(EntityNotFoundException::new);
 
-        checkLoginEmailAndPassword(loginEmail, member, loginPassword);
+        checkLoginEmailAndPassword(loginEmail, loginPassword, member);
+        return member;
     }
 
-    private void checkLoginEmailAndPassword(String loginEmail, Member member, String loginPassword) {
-        if (!loginEmail.equals(member.getEmail()) || !loginPassword.equals(member.getPassword())) {
+    private void checkLoginEmailAndPassword(String loginEmail, String loginPassword, Member member) {
+        String email = member.getEmail();
+        String password = member.getPassword();
+        if (!Objects.equals(email, loginEmail) || !Objects.equals(password, loginEmail)) {
             throw new IllegalArgumentException("비밀번호 불일치");
         }
     }
