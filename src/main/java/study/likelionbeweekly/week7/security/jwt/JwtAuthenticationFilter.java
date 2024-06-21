@@ -1,5 +1,7 @@
 package study.likelionbeweekly.week7.security.jwt;
 
+import static study.likelionbeweekly.week7.utils.Constants.AUTHORIZATION_HEADER_KEY;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,8 +20,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
-
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
@@ -28,21 +28,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER_KEY);
-        if (StringUtils.hasText(authorizationHeader)) {
-            String email = jwtService.parse(authorizationHeader);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        String jwt = request.getHeader(AUTHORIZATION_HEADER_KEY);
+        if (StringUtils.hasText(jwt)) {
+            String email = jwtService.parse(jwt);
 
-            UsernamePasswordAuthenticationToken token =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(userDetails);
 
             SecurityContextHolder.getContext()
-                    .setAuthentication(token);
+                    .setAuthentication(authenticationToken);
         }
-
         filterChain.doFilter(request, response);
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthenticationToken(UserDetails userDetails) {
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities());
     }
 }
