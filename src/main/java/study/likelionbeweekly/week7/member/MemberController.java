@@ -1,6 +1,6 @@
 package study.likelionbeweekly.week7.member;
 
-import static study.likelionbeweekly.week7.utils.Constants.AUTHORIZATION_HEADER_KEY;
+import static study.likelionbeweekly.week7.utils.Constant.AUTHORIZATION_HEADER_KEY;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class MemberController {
         String email = member.getEmail();
         String jwt = jwtService.create(email);
         return ResponseEntity.ok()
-                .header(AUTHORIZATION_HEADER_KEY, jwt)
+                .header(AUTHORIZATION_HEADER_KEY.getContent(), jwt)
                 .body("ok");
     }
 
